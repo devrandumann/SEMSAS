@@ -36,3 +36,4 @@ instance/
 coverage.xml
 *.cover
 *.log
+DATABASE_SETUP.md
