@@ -347,7 +347,7 @@ INSERT IGNORE INTO Users (User_ID, Username, Password_Hash, Role, Store_ID, Full
 (4, '5244', '$2b$12$u.orn2YIIgo.hfX.P9w6t.lXkPvaXMxjAxoeiXbKqPMpt29ZsPX8y', 'manager', 5244, 'Temel Reis'),
 (5, '6517', '$2b$12$dWGMPcIeHsESwmgGIhMDfuBvx5tN6HZp0Cv7rwvU.4djEQGMGbuRS', 'manager', 6517, 'Birol Sezer'),
 (6, '8696', '$2b$12$MWJXvIn1.zytzCzYJ24xxO.2WvDVNvkHU6cirRy.PKnGNWDhQ49uS', 'manager', 8696, 'Kadir Ozyilmaz'),
-(7, 'demo', '$2b$12$4m7.XF.98T5w/G9QeO7oSuQvQkZRY/NIfb0hM8rN2h24N/E5ZJ29S', 'demo', NULL, 'Demo User');
+(7, 'demo', '$2b$12$K57RkOdlP0YyrDI/ylGXwO/1qe/ZuVWtPoS58RhptAjnNs.PYkUzm', 'demo', NULL, 'Demo User');
 
 -- ============================================================================
 -- SETUP COMPLETE
