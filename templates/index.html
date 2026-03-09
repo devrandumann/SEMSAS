@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEMSAS - Smart Inventory Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#FFF3E0',   // Çok açık turuncu
+                            100: '#FFE0B2',
+                            400: '#FFCC80',
+                            500: '#FF9F43',  // Soft Turuncu (Ana Renk)
+                            600: '#FB8C00',
+                            900: '#E65100',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Tablo satır animasyonu */
+        tbody tr {
+            transition: all 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #FFF3E0;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col z-10 shadow-sm">
+            <div class="h-16 flex items-center px-6 border-b border-slate-100">
+                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center mr-3 text-white">
+                    <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xl font-bold text-slate-800 tracking-tight">SEMSAS</span>
+            </div>
+
+            <nav class="flex-1 px-4 py-6 space-y-1">
+                <a href="#"
+                    class="flex items-center px-4 py-3 text-brand-600 bg-brand-50 rounded-xl font-medium transition-colors">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="/products"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="package" class="w-5 h-5 mr-3"></i>
+                    Products
+                </a>
+                <a href="/brands"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="award" class="w-5 h-5 mr-3"></i>
+                    Brands
+                </a>
+                <a href="/stores"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="store" class="w-5 h-5 mr-3"></i>
+                    Stores
+                </a>
+                <a href="/shelves"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="layers" class="w-5 h-5 mr-3"></i>
+                    Shelves
+                </a>
+                <a href="/promotions"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="tag" class="w-5 h-5 mr-3"></i>
+                    Promotions
+                </a>
+                <a href="/alerts"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="bell" class="w-5 h-5 mr-3"></i>
+                    Alerts
+                    <span class="ml-auto bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold">3</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-slate-100">
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold"
+                        id="user-avatar">
+                        --
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <p class="text-sm font-semibold text-slate-700" id="user-name">Loading...</p>
+                        <p class="text-xs text-slate-500" id="user-role">--</p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()"
+                    class="w-full flex items-center justify-center px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 font-medium transition-colors cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto relative">
+            <!-- Top Navbar for Mobile -->
+            <header
+                class="bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-slate-200 px-6 py-4 flex justify-between items-center md:hidden">
+                <span class="text-lg font-bold text-slate-800">SEMSAS</span>
+                <button class="p-2 text-slate-600">
+                    <i data-lucide="menu"></i>
+                </button>
+            </header>
+
+            <div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Overview</h1>
+                        <p class="text-slate-500 mt-1">Welcome, here's today's store summary.</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="downloadReport()"
+                            class="flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-medium shadow-sm cursor-pointer transition-all">
+                            <i data-lucide="download" class="w-4 h-4 mr-2"></i> Download Report
+                        </button>
+                        <button onclick="window.location.href='/products'"
+                            class="flex items-center px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium shadow-md shadow-brand-500/30 transition-all cursor-pointer">
+                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Product
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="stats-container">
+                    <!-- Stat Card 1 -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group">
+                        <div class="relative z-10">
+                            <p class="text-sm font-medium text-slate-500">Total Stores</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-2" id="stat-stores">-</h3>
+                        </div>
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i data-lucide="store" class="w-24 h-24 text-brand-500"></i>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 2 -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group">
+                        <div class="relative z-10">
+                            <p class="text-sm font-medium text-slate-500">Registered Products</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-2" id="stat-products">-</h3>
+                        </div>
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i data-lucide="tag" class="w-24 h-24 text-blue-500"></i>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 3 -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group">
+                        <div class="relative z-10">
+                            <p class="text-sm font-medium text-slate-500">Critical Stock</p>
+                            <h3 class="text-3xl font-bold text-red-600 mt-2" id="stat-stock">-</h3>
+                        </div>
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i data-lucide="alert-triangle" class="w-24 h-24 text-red-500"></i>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 4 -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group">
+                        <div class="relative z-10">
+                            <p class="text-sm font-medium text-slate-500">Expiring Soon</p>
+                            <h3 class="text-3xl font-bold text-orange-600 mt-2" id="stat-expiry">-</h3>
+                            <p
+                                class="text-xs text-orange-600 mt-1 font-medium bg-orange-50 inline-block px-2 py-0.5 rounded">
+                                Urgent Action</p>
+                        </div>
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i data-lucide="clock" class="w-24 h-24 text-orange-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    <!-- Expiry Table (Large) -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                                <i data-lucide="calendar-clock" class="w-5 h-5 mr-2 text-brand-500"></i>
+                                Expiry Date Report
+                            </h2>
+                            <button onclick="alert('View all feature coming soon!')"
+                                class="text-sm text-brand-600 font-medium hover:text-brand-700 cursor-pointer">View
+                                All</button>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                                        <th class="p-4 font-semibold">Product Name</th>
+                                        <th class="p-4 font-semibold">Expiry Date</th>
+                                        <th class="p-4 font-semibold">Store</th>
+                                        <th class="p-4 font-semibold text-center">Stock</th>
+                                        <th class="p-4 font-semibold text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expiry-table-body" class="text-sm text-slate-700 divide-y divide-slate-100">
+                                    <!-- Veriler JS ile buraya gelecek -->
+                                    <tr>
+                                        <td class="p-4 text-center text-slate-400" colspan="5">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Alerts List (Small) -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                        <div class="p-6 border-b border-slate-100">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                                <i data-lucide="activity" class="w-5 h-5 mr-2 text-slate-400"></i>
+                                Recent Activities
+                            </h2>
+                        </div>
+                        <div class="p-4 space-y-4 overflow-y-auto max-h-[500px]" id="alerts-container">
+                            <!-- Data will be loaded via JS -->
+                            <div class="text-center text-slate-400 py-4">Loading...</div>
+                        </div>
+                        <div class="p-4 border-t border-slate-100 mt-auto bg-slate-50 rounded-b-2xl">
+                            <button onclick="alert('View all notifications feature coming soon!')"
+                                class="w-full py-2 text-sm text-slate-600 font-medium hover:text-brand-600 transition-colors cursor-pointer">
+                                View All Notifications
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Load current user info
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/current-user');
+                const user = await response.json();
+
+                // Update user display
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('user-avatar').textContent = initials;
+                document.getElementById('user-name').textContent = user.full_name;
+
+                if (user.role === 'admin') {
+                    document.getElementById('user-role').textContent = 'Administrator';
+                } else {
+                    document.getElementById('user-role').textContent = `${user.store_name} Manager`;
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                // Redirect to login if not authenticated
+                window.location.href = '/login';
+            }
+        }
+
+        // Logout function
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        // Download Report function
+        function downloadReport() {
+            window.location.href = '/api/reports/generate';
+        }
+
+        // Initialize icons
+        lucide.createIcons();
+
+        // Fetch data from API
+        async function fetchDashboardData() {
+            try {
+                // Summary Statistics
+                const summaryRes = await fetch('/api/dashboard/summary');
+                const summary = await summaryRes.json();
+
+                document.getElementById('stat-stores').innerText = summary.total_stores;
+                document.getElementById('stat-products').innerText = summary.total_products;
+                document.getElementById('stat-stock').innerText = summary.low_stock_alerts;
+                document.getElementById('stat-expiry').innerText = summary.expiring_soon;
+
+                // Expiring Products
+                const expiryRes = await fetch('/api/products/expiring');
+                const products = await expiryRes.json();
+
+                const expiryTable = document.getElementById('expiry-table-body');
+                expiryTable.innerHTML = '';
+
+                if (products.length === 0) {
+                    expiryTable.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">No data found.</td></tr>';
+                }
+
+                products.forEach(p => {
+                    // Date formatting
+                    const date = new Date(p.Expiry_Date);
+                    const now = new Date();
+                    const diffTime = date - now;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    let statusBadge = '';
+                    if (diffDays < 0) statusBadge = '<span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-full text-xs font-bold">Expired</span>';
+                    else if (diffDays <= 3) statusBadge = '<span class="bg-red-50 text-red-600 px-2.5 py-1 rounded-full text-xs font-bold">Critical (' + diffDays + ' days)</span>';
+                    else if (diffDays <= 7) statusBadge = '<span class="bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full text-xs font-bold">Expiring (' + diffDays + ' days)</span>';
+                    else statusBadge = '<span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-bold">Normal</span>';
+
+                    const row = `
+                        <tr class="hover:bg-brand-50/50 cursor-pointer">
+                            <td class="p-4 font-medium text-slate-800">${p.Product_Name}</td>
+                            <td class="p-4 text-slate-600">${p.Expiry_Date}</td>
+                            <td class="p-4 text-slate-500">${p.Store_Name || '-'}</td>
+                            <td class="p-4 text-center font-semibold text-slate-700">${p.Current_Stock || 0}</td>
+                            <td class="p-4 text-center">${statusBadge}</td>
+                        </tr>
+                    `;
+                    expiryTable.innerHTML += row;
+                });
+
+                // Alerts
+                const alertsRes = await fetch('/api/alerts');
+                const alerts = await alertsRes.json();
+                const alertsContainer = document.getElementById('alerts-container');
+                alertsContainer.innerHTML = '';
+
+                if (alerts.length === 0) {
+                    alertsContainer.innerHTML = '<div class="text-center text-slate-400 py-4">No notifications.</div>';
+                }
+
+                alerts.forEach(a => {
+                    let iconBg = 'bg-slate-100';
+                    let iconColor = 'text-slate-500';
+                    let icon = 'info';
+
+                    if (a.Alert_Type.includes('Expiry')) { iconBg = 'bg-red-100'; iconColor = 'text-red-600'; icon = 'clock'; }
+                    else if (a.Alert_Type.includes('Stock')) { iconBg = 'bg-orange-100'; iconColor = 'text-orange-600'; icon = 'boxes'; }
+                    else if (a.Alert_Type.includes('Price')) { iconBg = 'bg-green-100'; iconColor = 'text-green-600'; icon = 'tag'; }
+
+                    const item = `
+                        <div class="flex items-start p-3 bg-slate-50 rounded-xl hover:bg-white border border-transparent hover:border-slate-200 transition-all">
+                            <div class="flex-shrink-0 w-10 h-10 ${iconBg} rounded-full flex items-center justify-center ${iconColor} mt-1">
+                                <i data-lucide="${icon}" class="w-5 h-5"></i>
+                            </div>
+                            <div class="ml-3 w-full">
+                                <div class="flex justify-between items-start">
+                                    <p class="text-sm font-semibold text-slate-800">${a.Alert_Type}</p>
+                                    <span class="text-xs text-slate-400">${a.Alert_Date}</span>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-1">
+                                    <span class="font-medium text-slate-900">${a.Product_Name}</span> - ${a.Store_Name}
+                                </p>
+                                <div class="mt-2 flex items-center justify-between">
+                                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">${a.Employee_Name}</span>
+                                    <span class="text-[10px] bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-500">${a.Status}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    alertsContainer.innerHTML += item;
+                });
+                lucide.createIcons(); // Render newly added icons
+
+            } catch (err) {
+                console.error("Data fetch error:", err);
+            }
+        }
+
+        // Run on page load
+        loadUserInfo();
+        fetchDashboardData();
+    </script>
+</body>
+
+</html>

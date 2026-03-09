@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promotions - SEMSAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#FFF3E0', 100: '#FFE0B2', 400: '#FFCC80',
+                            500: '#FF9F43', 600: '#FB8C00', 900: '#E65100'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col z-10 shadow-sm">
+            <div class="h-16 flex items-center px-6 border-b border-slate-100">
+                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center mr-3 text-white">
+                    <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xl font-bold text-slate-800 tracking-tight">SEMSAS</span>
+            </div>
+            <nav class="flex-1 px-4 py-6 space-y-1">
+                <a href="/"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> Dashboard
+                </a>
+                <a href="/products"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="package" class="w-5 h-5 mr-3"></i> Products
+                </a>
+                <a href="/brands"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="award" class="w-5 h-5 mr-3"></i> Brands
+                </a>
+                <a href="/stores"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="store" class="w-5 h-5 mr-3"></i> Stores
+                </a>
+                <a href="/shelves"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="layers" class="w-5 h-5 mr-3"></i> Shelves
+                </a>
+                <a href="/promotions"
+                    class="flex items-center px-4 py-3 text-brand-600 bg-brand-50 rounded-xl font-medium transition-colors">
+                    <i data-lucide="tag" class="w-5 h-5 mr-3"></i> Promotions
+                </a>
+                <a href="/alerts"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="bell" class="w-5 h-5 mr-3"></i> Alerts
+                    <span class="ml-auto bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold">3</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-slate-100">
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold"
+                        id="user-avatar">
+                        --
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <p class="text-sm font-semibold text-slate-700" id="user-name">Loading...</p>
+                        <p class="text-xs text-slate-500" id="user-role">--</p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()"
+                    class="w-full flex items-center justify-center px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 font-medium transition-colors cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto relative">
+            <div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Promotions & Discounts</h1>
+                        <p class="text-slate-500 mt-1">Track active promotions and expiry-based discounts</p>
+                    </div>
+                </div>
+
+                <!-- Active Promotions -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+                    <div class="p-6 border-b border-slate-100">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                            <i data-lucide="percent" class="w-5 h-5 mr-2 text-brand-500"></i>
+                            Active Promotions
+                        </h2>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="promotions-container">
+                        <div class="text-center text-slate-400 py-8">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/current-user');
+                const user = await response.json();
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('user-avatar').textContent = initials;
+                document.getElementById('user-name').textContent = user.full_name;
+                if (user.role === 'admin') {
+                    document.getElementById('user-role').textContent = 'Administrator';
+                } else {
+                    document.getElementById('user-role').textContent = `${user.store_name} Manager`;
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = '/login';
+            }
+        }
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/login';
+            }
+        }
+        lucide.createIcons();
+        loadUserInfo();
+
+        async function loadPromotions() {
+            try {
+                const res = await fetch('/api/promotions');
+                const promotions = await res.json();
+                const container = document.getElementById('promotions-container');
+                container.innerHTML = '';
+
+                if (promotions.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center text-slate-400 py-8">No active promotions.</div>';
+                    return;
+                }
+
+                promotions.forEach(promo => {
+                    // Calculate days remaining
+                    const endDate = new Date(promo.End_Date);
+                    const now = new Date();
+                    const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+
+                    let statusBadge = '';
+                    let statusColor = 'bg-green-100 text-green-700';
+
+                    if (daysLeft < 0) {
+                        statusBadge = 'Expired';
+                        statusColor = 'bg-gray-100 text-gray-600';
+                    } else if (daysLeft <= 3) {
+                        statusBadge = `${daysLeft} days left`;
+                        statusColor = 'bg-red-100 text-red-700';
+                    } else if (daysLeft <= 7) {
+                        statusBadge = `${daysLeft} days left`;
+                        statusColor = 'bg-orange-100 text-orange-700';
+                    } else {
+                        statusBadge = `${daysLeft} days left`;
+                        statusColor = 'bg-green-100 text-green-700';
+                    }
+
+                    const discountText = promo.Discount_Type === 'Percentage'
+                        ? `${promo.Discount_Value}% OFF`
+                        : `$${promo.Discount_Value} OFF`;
+
+                    const targetText = promo.Product_Name || promo.Category_Name || promo.Brand_Name || 'All Products';
+
+                    const card = `
+                        <div class="border border-slate-200 rounded-xl p-5 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-slate-50">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="w-12 h-12 bg-brand-100 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="tag" class="w-6 h-6 text-brand-600"></i>
+                                </div>
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full ${statusColor}">${statusBadge}</span>
+                            </div>
+                            <h3 class="font-bold text-slate-900 mb-2">${promo.Promotion_Name}</h3>
+                            <p class="text-2xl font-bold text-brand-600 mb-3">${discountText}</p>
+                            <div class="space-y-1 text-sm text-slate-600">
+                                <p><i data-lucide="box" class="w-4 h-4 inline mr-1"></i> ${targetText}</p>
+                                <p><i data-lucide="calendar" class="w-4 h-4 inline mr-1"></i> ${promo.Start_Date} to ${promo.End_Date}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+                lucide.createIcons();
+            } catch (err) {
+                console.error('Error loading promotions:', err);
+            }
+        }
+
+        loadPromotions();
+    </script>
+</body>
+
+</html>

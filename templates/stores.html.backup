@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stores - SEMSAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#FFF3E0', 100: '#FFE0B2', 400: '#FFCC80',
+                            500: '#FF9F43', 600: '#FB8C00', 900: '#E65100'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        tbody tr {
+            transition: all 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #FFF3E0;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col z-10 shadow-sm">
+            <div class="h-16 flex items-center px-6 border-b border-slate-100">
+                <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center mr-3 text-white">
+                    <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xl font-bold text-slate-800 tracking-tight">SEMSAS</span>
+            </div>
+            <nav class="flex-1 px-4 py-6 space-y-1">
+                <a href="/"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> Dashboard
+                </a>
+                <a href="/products"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="package" class="w-5 h-5 mr-3"></i> Products
+                </a>
+                <a href="/stores"
+                    class="flex items-center px-4 py-3 text-brand-600 bg-brand-50 rounded-xl font-medium transition-colors">
+                    <i data-lucide="store" class="w-5 h-5 mr-3"></i> Stores
+                </a>
+                <a href="/promotions"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="tag" class="w-5 h-5 mr-3"></i> Promotions
+                </a>
+                <a href="/"
+                    class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i data-lucide="bell" class="w-5 h-5 mr-3"></i> Alerts
+                    <span class="ml-auto bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold">3</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-slate-100">
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 mb-3">
+                    <div
+                        class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold"
+                        id="user-avatar">
+                        --
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <p class="text-sm font-semibold text-slate-700" id="user-name">Loading...</p>
+                        <p class="text-xs text-slate-500" id="user-role">--</p>
+                    </div>
+                </div>
+                <button 
+                    onclick="handleLogout()"
+                    class="w-full flex items-center justify-center px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 font-medium transition-colors cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto relative">
+            <div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Store Management</h1>
+                        <p class="text-slate-500 mt-1">Manage your store locations and employees</p>
+                    </div>
+                </div>
+
+                <!-- Stores Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="stores-container">
+                    <div class="text-center text-slate-400 py-8">Loading...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Employee Details Modal -->
+    <div id="employeeModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-900" id="modal-store-name">Store Employees</h3>
+                <button onclick="closeEmployeeModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="employees-list" class="space-y-3">
+                <!-- Employees will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+                async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/current-user');
+                const user = await response.json();
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('user-avatar').textContent = initials;
+                document.getElementById('user-name').textContent = user.full_name;
+                if (user.role === 'admin') {
+                    document.getElementById('user-role').textContent = 'Administrator';
+                } else {
+                    document.getElementById('user-role').textContent = `Manager - ${user.store_name || 'Store'}`;
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = '/login';
+            }
+        }
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/login';
+            }
+        }
+        lucide.createIcons();
+        loadUserInfo();
+
+        let allStores = [];
+
+        function openEmployeeModal(storeId) {
+            const store = allStores.find(s => s.Store_ID === storeId);
+            if (!store) return;
+
+            document.getElementById('modal-store-name').textContent = store.Name + ' - Employees';
+
+            fetch(`/api/stores/${storeId}/employees`)
+                .then(res => res.json())
+                .then(employees => {
+                    const container = document.getElementById('employees-list');
+                    container.innerHTML = '';
+
+                    if (employees.length === 0) {
+                        container.innerHTML = '<p class="text-center text-slate-400 py-4">No employees found.</p>';
+                    } else {
+                        employees.forEach(emp => {
+                            const card = `
+                                <div class="flex items-center p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                                    <div class="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold text-lg">
+                                        ${emp.Name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <h4 class="font-semibold text-slate-900">${emp.Name}</h4>
+                                        <p class="text-sm text-slate-600">${emp.Position} • ${emp.Shift_Time} Shift</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm text-slate-500"><i data-lucide="phone" class="w-4 h-4 inline"></i> ${emp.Contact_Number}</p>
+                                    </div>
+                                </div>
+                            `;
+                            container.innerHTML += card;
+                        });
+                                async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/current-user');
+                const user = await response.json();
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('user-avatar').textContent = initials;
+                document.getElementById('user-name').textContent = user.full_name;
+                if (user.role === 'admin') {
+                    document.getElementById('user-role').textContent = 'Administrator';
+                } else {
+                    document.getElementById('user-role').textContent = `Manager - ${user.store_name || 'Store'}`;
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = '/login';
+            }
+        }
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/login';
+            }
+        }
+        lucide.createIcons();
+        loadUserInfo();
+                    }
+
+                    document.getElementById('employeeModal').classList.remove('hidden');
+                            async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/current-user');
+                const user = await response.json();
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('user-avatar').textContent = initials;
+                document.getElementById('user-name').textContent = user.full_name;
+                if (user.role === 'admin') {
+                    document.getElementById('user-role').textContent = 'Administrator';
+                } else {
+                    document.getElementById('user-role').textContent = `Manager - ${user.store_name || 'Store'}`;
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = '/login';
+            }
+        }
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/login';
+            }
+        }
+        lucide.createIcons();
+        loadUserInfo();
+                })
+                .catch(err => console.error('Error loading employees:', err));
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.add('hidden');
+        }
+
+        async function loadStores() {
+            try {
+                const res = await fetch('/api/stores');
+                const stores = await res.json();
+                allStores = stores;
+                const container = document.getElementById('stores-container');
+                container.innerHTML = '';
+
+                if (stores.length === 0) {
+                    container.innerHTML = '<div class="text-center text-slate-400 py-8">No stores found.</div>';
+                    return;
+                }
+
+                stores.forEach(store => {
+                    const card = `
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 hover:shadow-md transition-all cursor-pointer" onclick="openEmployeeModal(${store.Store_ID})">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center">
+                                    <i data-lucide="store" class="w-6 h-6 text-brand-600"></i>
+                                </div>
+                                <span class="text-xs font-bold text-slate-400">#${store.Store_ID}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">${store.Name}</h3>
+                            <p class="text-sm text-slate-600 mb-1"><i data-lucide="map-pin" class="w-4 h-4 inline mr-1"></i> ${store.Address}</p>
+                            <p class="text-sm text-slate-600 mb-3"><i data-lucide="phone" class="w-4 h-4 inline mr-1"></i> ${store.Contact_Info}</p>
+                            <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+                                <p class="text-xs text-slate-500 font-medium"><i data-lucide="users" class="w-4 h-4 inline mr-1"></i> ${store.Employee_Count || 0} Employees</p>
+                                <span class="text-xs text-brand-600 font-semibold">Click to view →</span>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+                        async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/current-user');
+                const user = await response.json();
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('user-avatar').textContent = initials;
+                document.getElementById('user-name').textContent = user.full_name;
+                if (user.role === 'admin') {
+                    document.getElementById('user-role').textContent = 'Administrator';
+                } else {
+                    document.getElementById('user-role').textContent = `Manager - ${user.store_name || 'Store'}`;
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = '/login';
+            }
+        }
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/login';
+            }
+        }
+        lucide.createIcons();
+        loadUserInfo();
+            } catch (err) {
+                console.error('Error loading stores:', err);
+            }
+        }
+
+        loadStores();
+    </script>
+</body>
+
+</html>
