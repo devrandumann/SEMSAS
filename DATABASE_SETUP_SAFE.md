@@ -44,6 +44,10 @@ This will:
 - 4456 / `<YOUR_MANAGER_PASSWORD_HERE>` (Bektas Baltaci - Bosna Mjet)
 - 8696 / `<YOUR_MANAGER_PASSWORD_HERE>` (Kadir Ozyilmaz - Baku M)
 
+**Demo Account (Publicly accessible/restricted capabilities):**
+- Username: `demo`
+- Password: `demo`
+
 ## Files
 
 - **mysql_init.sql** - Complete MySQL setup (USE THIS)
