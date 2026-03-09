@@ -53,6 +53,9 @@ class User(UserMixin):
     
     def is_manager(self):
         return self.role == 'manager'
+        
+    def is_demo(self):
+        return self.role == 'demo'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -369,6 +372,9 @@ def get_products():
 @app.route('/api/products', methods=['POST'])
 @login_required
 def add_product():
+    if current_user.is_demo():
+        return jsonify({'error': 'Demo users cannot modify data. Access restricted.'}), 403
+        
     try:
         data = request.json
         conn = get_db_connection()
@@ -394,6 +400,9 @@ def add_product():
 @app.route('/api/products/<int:product_id>', methods=['DELETE'])
 @login_required
 def delete_product(product_id):
+    if current_user.is_demo():
+        return jsonify({'error': 'Demo users cannot delete data. Access restricted.'}), 403
+
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
